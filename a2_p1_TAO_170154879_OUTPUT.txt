@@ -1,0 +1,16 @@
+Checkpoint 1.1
+['<s>', 'Pers', 'ian', 'Ġ(/', 'ËĪ', 'p', 'É', 'ľ', 'Ë', 'Ĳ', 'r', 'Ê', 'Ĵ', 'É', 'Ļ', 'n', ',', 'Ġ-', 'Ê', 'ĥ', 'É', 'Ļ', 'n', '/', '),', 'Ġalso', 'Ġknown', 'Ġby', 'Ġits', 'Ġend', 'onym', 'ĠF', 'ars', 'i', 'Ġ(', 'Ù', 'ģ', 'Ø§', 'Ø±', 'Ø³', 'Û', 'Į', 'Ġf', 'Äģ', 'rs', 'i', 'Ġ(', 'f', 'É', 'Ĵ', 'Ë', 'Ĳ', 'É', '¾', 'ËĪ', 'si', 'Ë', 'Ĳ', ')', 'Ġ(', 'Ġlisten', ')),', 'Ġis', 'Ġone', 'Ġof', 'Ġthe', 'ĠWestern', 'ĠIranian', 'Ġlanguages', 'Ġwithin', 'Ġthe', 'ĠIndo', '-', 'Iran', 'ian', 'Ġbranch', 'Ġof', 'Ġthe', 'ĠIndo', '-', 'European', 'Ġlanguage', 'Ġfamily', '.', 'ĠIt', 'Ġis', 'Ġprimarily', 'Ġspoken', 'Ġin', 'ĠIran', ',', 'ĠAfghanistan', 'Ġ(', 'offic', 'ially', 'Ġknown', 'Ġas', 'ĠD', 'ari', 'Ġsince', 'Ġ1958', '),', 'Ġand', 'ĠTaj', 'ik', 'istan', 'Ġ(', 'offic', 'ially', 'Ġknown', 'Ġas', 'ĠTaj', 'iki', 'Ġsince', 'Ġthe', 'ĠSoviet', 'Ġera', '),', 'Ġand', 'Ġsome', 'Ġother', 'Ġregions', 'Ġwhich', 'Ġhistorically', 'Ġwere', 'ĠPersian', 'ate', 'Ġsocieties', 'Ġand', 'Ġconsidered', 'Ġpart', 'Ġof', 'ĠGreater', 'ĠIran', '.', 'ĠIt', 'Ġis', 'Ġwritten', 'Ġin', 'Ġthe', 'ĠPersian', 'Ġalphabet', ',', 'Ġa', 'Ġmodified', 'Ġvariant', 'Ġof', 'Ġthe', 'ĠArabic', 'Ġscript', ',', 'Ġwhich', 'Ġitself', 'Ġevolved', 'Ġfrom', 'Ġthe', 'ĠAram', 'aic', 'Ġalphabet', '.', 'Ġdo', 'Ġir', 'an', 'Ġand', 'Ġaf', 'ghan', 'istan', 'Ġspeak', 'Ġthe', 'Ġsame', 'Ġlanguage', '?', 'ĠTrue', '</s>']
+['<s>', 'The', 'Ġmargin', 'Ġof', 'Ġerror', 'Ġis', 'Ġusually', 'Ġdefined', 'Ġas', 'Ġthe', 'Ġ``', 'radius', "''", 'Ġ(', 'or', 'Ġhalf', 'Ġthe', 'Ġwidth', ')', 'Ġof', 'Ġa', 'Ġconfidence', 'Ġinterval', 'Ġfor', 'Ġa', 'Ġparticular', 'Ġstatistic', 'Ġfrom', 'Ġa', 'Ġsurvey', '.', 'ĠOne', 'Ġexample', 'Ġis', 'Ġthe', 'Ġpercent', 'Ġof', 'Ġpeople', 'Ġwho', 'Ġprefer', 'Ġproduct', 'ĠA', 'Ġversus', 'Ġproduct', 'ĠB', '.', 'ĠWhen', 'Ġa', 'Ġsingle', ',', 'Ġglobal', 'Ġmargin', 'Ġof', 'Ġerror', 'Ġis', 'Ġreported', 'Ġfor', 'Ġa', 'Ġsurvey', ',', 'Ġit', 'Ġrefers', 'Ġto', 'Ġthe', 'Ġmaximum', 'Ġmargin', 'Ġof', 'Ġerror', 'Ġfor', 'Ġall', 'Ġreported', 'Ġpercentages', 'Ġusing', 'Ġthe', 'Ġfull', 'Ġsample', 'Ġfrom', 'Ġthe', 'Ġsurvey', '.', 'ĠIf', 'Ġthe', 'Ġstatistic', 'Ġis', 'Ġa', 'Ġpercentage', ',', 'Ġthis', 'Ġmaximum', 'Ġmargin', 'Ġof', 'Ġerror', 'Ġcan', 'Ġbe', 'Ġcalculated', 'Ġas', 'Ġthe', 'Ġradius', 'Ġof', 'Ġthe', 'Ġconfidence', 'Ġinterval', 'Ġfor', 'Ġa', 'Ġreported', 'Ġpercentage', 'Ġof', 'Ġ50', '%.', 'Ġis', 'Ġmargin', 'Ġof', 'Ġerror', 'Ġthe', 'Ġsame', 'Ġas', 'Ġconfidence', 'Ġinterval', '?', 'ĠFalse', '</s>']
+['<s>', 'Remember', 'Ġwhat', 'Ġshe', 'Ġsaid', 'Ġin', 'Ġmy', 'Ġlast', 'Ġletter', '?', 'Ġ"', '</s>']
+['<s>', 'With', 'Ġyour', 'Ġincreased', 'Ġcommitment', ',', 'Ġwe', 'Ġcan', 'Ġmove', 'Ġforward', 'Ġto', 'Ġthwart', 'Ġthe', 'Ġmost', 'Ġserious', 'Ġthreats', 'Ġto', 'Ġendangered', 'Ġecosystems', '.', '</s>']
+
+Checkpoint 1.2
+   history: ['is', 'Ġmargin', 'Ġof', 'Ġerror', 'Ġthe', 'Ġsame', 'Ġas', 'Ġconfidence']
+ Ġinterval: 0.000059
+      Ġthe: 0.022820
+       Ġis: 0.006970
+
+   history: ['Ġby', 'Ġland', 'Ġor', 'Ġby']
+      Ġsea: 0.000054
+    Ġwater: 0.000202
+    Ġcycle: 0.000038

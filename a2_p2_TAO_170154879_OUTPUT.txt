@@ -1,0 +1,14 @@
+Checkpoint 2.1
+Overall: acc: 0.441, f1: 0.427
+Yes: prec: 0.639, rec: 0.231, f1: 0.339
+No: prec: 0.383, rec: 0.786, f1: 0.515
+
+Checkpoint 2.2
+Overall: acc: 0.378, f1: 0.274
+Yes: prec: 0.000, rec: 0.000, f1: 0.000
+No: prec: 0.378, rec: 1.000, f1: 0.549
+
+Checkpoint 2.4
+Overall: acc: 0.463, f1: 0.458
+Yes: prec: 0.650, rec: 0.294, f1: 0.405
+No: prec: 0.389, rec: 0.741, f1: 0.510

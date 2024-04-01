@@ -4,11 +4,11 @@ from transformers import PreTrainedTokenizerFast
 from collections import defaultdict
 
 boolq_dataset = load_dataset('google/boolq')
-emo_dataset = load_dataset('Blablablab/SOCKET', 'emobank#valence')
+emo_dataset = load_dataset('Blablablab/SOCKET', 'emobank#valence', trust_remote_code=True)
 gpt2_tokenizer = PreTrainedTokenizerFast.from_pretrained('distilbert/distilgpt2', unk_token='<unk>')
 
 def tokenizeWithStartStop(text: str) -> list[str]:
-    tokens: list[str] = gpt2_tokenizer.tokenize(text)
+    tokens: list[str] = gpt2_tokenizer.tokenize(text, truncation=True, max_length=1024)
     tokens = ['<s>'] + tokens + ['</s>']
     return tokens
 

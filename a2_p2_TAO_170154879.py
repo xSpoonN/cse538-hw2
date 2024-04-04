@@ -12,7 +12,6 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 boolq_dataset = load_dataset('google/boolq')
 emo_dataset = load_dataset('Blablablab/SOCKET', 'emobank#valence', trust_remote_code=True)
 tokenizer = AutoTokenizer.from_pretrained('distilbert/distilgpt2', unk_token='<unk>')
-gpt2_tokenizer = PreTrainedTokenizerFast.from_pretrained('distilbert/distilgpt2', unk_token='<unk>')
 model = AutoModelForCausalLM.from_pretrained('distilbert/distilgpt2').to(device)
 
 predictions = []
@@ -105,7 +104,8 @@ for epoch in range(numEpochs):
         input_text = f"{passage}\n{question}?\n{label}"
         #print(input_texts)
         inputs = tokenizer(input_text, truncation=True, max_length=1024, return_tensors="pt").to(device)
-        #print(inputs)
+        # print(inputs)
+        # exit()
         #print(inputs["input_ids"])
 
         outputs = model(**inputs, labels=inputs["input_ids"])

@@ -4,6 +4,7 @@ from torch.utils.data import DataLoader
 import numpy as np
 from datasets import load_dataset
 from transformers import RobertaModel, RobertaTokenizerFast
+from transformers.models.roberta.modeling_roberta import RobertaSelfOutput, RobertaAttention, RobertaLayer, RobertaEncoder
 from collections import defaultdict
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 import matplotlib.pyplot as plt
@@ -11,7 +12,7 @@ import matplotlib.pyplot as plt
 class Classifier(torch.nn.Module):
     def __init__(self, basemodel):
         super().__init__()
-        self.model = basemodel
+        self.model = basemodel.clone()
         self.linear = torch.nn.Linear(basemodel.config.hidden_size, 1)
 
     def forward(self, input_ids, attention_mask):
@@ -23,13 +24,37 @@ class Classifier(torch.nn.Module):
 class Regression(torch.nn.Module):
     def __init__(self, basemodel):
         super().__init__()
-        self.model = basemodel
+        self.model = basemodel.clone()
         self.linear = torch.nn.Linear(basemodel.config.hidden_size, 1)
 
     def forward(self, input_ids, attention_mask):
         output = self.model(input_ids, attention_mask=attention_mask)
         logits = self.linear(output.last_hidden_state[:, 0, :])
         return logits
+
+class NoResidualRobertaSelfOutput(RobertaSelfOutput):
+    def forward(self, hidden_states: torch.Tensor, input_tensor: torch.Tensor) -> torch.Tensor:
+        hidden_states = self.dense(hidden_states)
+        hidden_states = self.dropout(hidden_states)
+        hidden_states = self.LayerNorm(hidden_states)
+        return hidden_states
+class NoResidualRobertaAttention(RobertaAttention):
+    def __init__(self, config, position_embedding_type=None):
+        super().__init__(config, position_embedding_type)
+        self.output = NoResidualRobertaSelfOutput(config)
+class NoResidualRobertaLayer(RobertaLayer):
+    def __init__(self, config):
+        super().__init__(config)
+        self.attention = NoResidualRobertaAttention(config)
+class NoResidualRobertaEncoder(RobertaEncoder):
+    def __init__(self, config):
+        super().__init__(config)
+        self.layer = torch.nn.ModuleList([NoResidualRobertaLayer(config) for _ in range(config.num_hidden_layers)])
+class NoResidualRobertaModel(RobertaModel):
+    def __init__(self, config, add_pooling_layer=True):
+        super().__init__(config, add_pooling_layer)
+        self.encoder = NoResidualRobertaEncoder(config)
+        
 
 def fineTune_boolQ(model, name = 'model'):
     train_dataset = boolq_dataset['train'].map(lambda example: {'label': 1 if example['answer'] == True else 0})
@@ -43,7 +68,7 @@ def fineTune_boolQ(model, name = 'model'):
         print(f"\nEpoch {epoch}", end=' ')
         epoch_loss = 0
         for i, batch in enumerate(DataLoader(train_dataset, batch_size=8, shuffle=True, pin_memory=True, num_workers=4)):
-            if i % 200 == 0: print(f"\nBatch {i} - {i+200} ...", end=' ')
+            # if i % 200 == 0: print(f"\nBatch {i} - {i+200} ...", end=' ')
             optimizer.zero_grad()
             prompts = [f"{passage}\n{question}?\n" for passage, question in zip(batch['passage'], batch['question'])]
             inputs = tokenizer(prompts, padding=True, truncation=True, max_length=512, return_tensors='pt').to(device)
@@ -66,7 +91,7 @@ def evaluate_boolQ(model, name = 'model'):
     print(f'Evaluating {name} on BoolQ', end=' ')
     with torch.no_grad():
         for i, batch in enumerate(DataLoader(validate_dataset, batch_size=16, pin_memory=True, num_workers=4)):
-            if i % 200 == 0: print(f"\nBatch {i} - {i+200} ...", end=' ')
+            # if i % 200 == 0: print(f"\nBatch {i} - {i+200} ...", end=' ')
             prompts = [f"{passage}\n{question}?\n" for passage, question in zip(batch['passage'], batch['question'])]
             inputs = tokenizer(prompts, padding=True, truncation=True, max_length=512, return_tensors='pt').to(device)
             labels = batch['label'].float().to(device)
@@ -96,7 +121,7 @@ def fineTune_emoBank(model, name = 'model'):
         print(f"\nEpoch {epoch}", end=' ')
         epoch_loss = 0
         for i, batch in enumerate(DataLoader(train_dataset, batch_size=8, shuffle=True, pin_memory=True, num_workers=4)):
-            if i % 200 == 0: print(f"\nBatch {i} - {i+200} ...", end=' ')
+            # if i % 200 == 0: print(f"\nBatch {i} - {i+200} ...", end=' ')
             optimizer.zero_grad()
             inputs = tokenizer(batch['text'], padding=True, truncation=True, max_length=512, return_tensors='pt').to(device)
             labels = batch['label'].float().to(device)
@@ -121,7 +146,7 @@ def evaluate_emoBank(model, name = 'model'):
     print(f'Evaluating {name} on EmoBank', end=' ')
     with torch.no_grad():
         for i, batch in enumerate(DataLoader(validate_dataset, batch_size=8, pin_memory=True, num_workers=4)):
-            if i % 200 == 0: print(f"\nBatch {i} - {i+200} ...", end=' ')
+            # if i % 200 == 0: print(f"\nBatch {i} - {i+200} ...", end=' ')
             inputs = tokenizer(batch['text'], padding=True, truncation=True, max_length=512, return_tensors='pt').to(device)
             labels = batch['label'].float().to(device)
             logits = model(**inputs).squeeze()
@@ -130,7 +155,7 @@ def evaluate_emoBank(model, name = 'model'):
             validate_labels.extend(labels.cpu().numpy().squeeze())
 
         for i, batch in enumerate(DataLoader(test_dataset, batch_size=8, pin_memory=True, num_workers=4)):
-            if i % 200 == 0: print(f"\nBatch {i} - {i+200} ...", end=' ')
+            # if i % 200 == 0: print(f"\nBatch {i} - {i+200} ...", end=' ')
             inputs = tokenizer(batch['text'], padding=True, truncation=True, return_tensors='pt').to(device)
             labels = batch['label'].float().to(device)
             logits = model(**inputs).squeeze()
@@ -153,7 +178,7 @@ if __name__ == '__main__':
     model = RobertaModel.from_pretrained('distilroberta-base').to(device)
     tokenizer = RobertaTokenizerFast.from_pretrained('distilroberta-base', pad_token='<pad>', unk_token='<unk>')
 
-    if False: # Classification
+    if True: # Classification
         classifier = Classifier(model).to(device)#.to(dtype=torch.float16)
         train_losses = fineTune_boolQ(classifier)
 
@@ -170,7 +195,7 @@ if __name__ == '__main__':
         print(f"    Yes: prec: {precision_yes:.3f}, rec: {recall_yes:.3f}, f1: {2*(precision_yes*recall_yes)/(precision_yes+recall_yes):.3f}")
         print(f"     No: prec: {precision_no:.3f}, rec: {recall_no:.3f}, f1: {2*(precision_no*recall_no)/(precision_no+recall_no):.3f}")
 
-    if False: # Regression
+    if True: # Regression
         validate_dataset = emo_dataset['validation']
         test_dataset = emo_dataset['test']
 
@@ -194,9 +219,8 @@ if __name__ == '__main__':
         distilRB_rand2 = RobertaModel.from_pretrained('distilroberta-base').to(device)
         distilRB_KQ1 = RobertaModel.from_pretrained('distilroberta-base').to(device)
         distilRB_KQ2 = RobertaModel.from_pretrained('distilroberta-base').to(device)
-        distilRB_nores1 = RobertaModel.from_pretrained('distilroberta-base').to(device)
-        distilRB_nores2 = RobertaModel.from_pretrained('distilroberta-base').to(device)
-
+        distilRB_nores1 = NoResidualRobertaModel.from_pretrained('distilroberta-base').to(device)
+        distilRB_nores2 = NoResidualRobertaModel.from_pretrained('distilroberta-base').to(device)
 
         # Modify distilRB-rand
         distilRB_rand1.init_weights()
@@ -218,15 +242,6 @@ if __name__ == '__main__':
             layer.attention.self.query.weight = torch.nn.Parameter(sharedW)
             layer.attention.self.key.weight = torch.nn.Parameter(sharedW)
 
-
-        # Modify distilRB-nores
-        for layer in distilRB_nores1.encoder.layer:
-            layer.attention.output = torch.nn.Identity()
-            layer.output = layer.attention.output
-        for layer in distilRB_nores2.encoder.layer:
-            layer.attention.output = torch.nn.Identity()
-            layer.output = layer.attention.output
-
         distilRB_rand1 = Classifier(distilRB_rand1).to(device)
         distilRB_rand2 = Regression(distilRB_rand2).to(device)
         distilRB_KQ1 = Classifier(distilRB_KQ1).to(device)
@@ -234,8 +249,8 @@ if __name__ == '__main__':
         distilRB_nores1 = Classifier(distilRB_nores1).to(device)
         distilRB_nores2 = Regression(distilRB_nores2).to(device)
 
-        # train_losses1 = fineTune_boolQ(distilRB_rand1, 'distilRB_rand')
-        # train_losses2 = fineTune_boolQ(distilRB_KQ1, 'distilRB_KQ')
+        train_losses1 = fineTune_boolQ(distilRB_rand1, 'distilRB_rand')
+        train_losses2 = fineTune_boolQ(distilRB_KQ1, 'distilRB_KQ')
         train_losses3 = fineTune_boolQ(distilRB_nores1, 'distilRB_nores')
         train_losses4 = fineTune_emoBank(distilRB_rand2, 'distilRB_rand')
         train_losses5 = fineTune_emoBank(distilRB_KQ2, 'distilRB_KQ')
@@ -250,3 +265,23 @@ if __name__ == '__main__':
             ax.set_ylabel('Loss')
             ax.set_title(f'Loss {title}')
         plt.savefig('3.3.png')
+
+        print('\nCheckpoint 3.4')
+        print('boolq validation set: ')
+        acc, f1, _, _, _, _ = evaluate_boolQ(classifier, 'distilroberta')
+        print(f'distilroberta: overall acc: {acc:.3f}, f1: {f1:.3f}')
+        acc, f1, _, _, _, _ = evaluate_boolQ(distilRB_rand1, 'distilRB_rand')
+        print(f'distilRB-rand: overall acc: {acc:.3f}, f1: {f1:.3f}')
+        acc, f1, _, _, _, _ = evaluate_boolQ(distilRB_KQ1, 'distilRB_KQ')
+        print(f'distilRB-KQ: overall acc: {acc:.3f}, f1: {f1:.3f}')
+        acc, f1, _, _, _, _ = evaluate_boolQ(distilRB_nores1, 'distilRB_nores')
+        print(f'distilRB-nores: overall acc: {acc:.3f}, f1: {f1:.3f}')
+        print('emobank validation set: ')
+        mae, r, _, _ = evaluate_emoBank(regression, 'distilroberta')
+        print(f'distilroberta: mae: {mae:.3f}, r: {r:.3f}')
+        mae, r, _, _ = evaluate_emoBank(distilRB_rand2, 'distilRB_rand')
+        print(f'distilRB-rand: mae: {mae:.3f}, r: {r:.3f}')
+        mae, r, _, _ = evaluate_emoBank(distilRB_KQ2, 'distilRB_KQ')
+        print(f'distilRB-KQ: mae: {mae:.3f}, r: {r:.3f}')
+        mae, r, _, _ = evaluate_emoBank(distilRB_nores2, 'distilRB_nores')
+        print(f'distilRB-nores: mae: {mae:.3f}, r: {r:.3f}')

@@ -195,6 +195,7 @@ if __name__ == '__main__':
         plt.ylabel('Loss')
         plt.title('Training Loss')
         plt.savefig('3.1.png')
+        plt.close()
 
         # Evaluation
         accuracy, f1, precision_yes, recall_yes, precision_no, recall_no = evaluate_boolQ(classifier)
@@ -213,6 +214,7 @@ if __name__ == '__main__':
         plt.ylabel('Loss')
         plt.title('Training Loss')
         plt.savefig('3.2.png')
+        plt.close()
 
         # Evaluation
         validate_mae, validate_r, test_mae, test_r = evaluate_emoBank(regression)
